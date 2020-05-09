@@ -1,0 +1,27 @@
+create or replace
+
+PROCEDURE QC_CYCLE_REPORT_SP(p_reqno   IN Number,
+
+p_record_set OUT SYS_REFCURSOR) AS
+
+BEGIN
+
+OPEN p_record_set FOR
+
+select l.ls_name, T1.mycount from
+
+MYSCHEMA.lists l left outer join (select tc.tc_status,count(*) mycount from default_crm_db.cycle c, default_crm_db.testcycl tc
+
+where c.cy_cycle_id=TC.TC_CYCLE_ID
+
+and c.cy_user_01=219971
+
+group by tc.tc_status) T1 on l.ls_name=T1.tc_status
+
+where ls_father_id=(select LS_ID from
+
+MYSCHEMA.lists
+
+where LS_NAME=’Status’);
+
+END QC_CYCLE_REPORT_SP;
